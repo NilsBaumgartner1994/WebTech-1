@@ -8,7 +8,7 @@ Web crawler using Requests library. Backend is in store.py.
 @status: completed
 @version: 1 (10/2018)
 
-Sie KÖNNEN die hier vorgeschlagene Struktur nutzen, müssen das aber nicht.
+Sie KOENNEN die hier vorgeschlagene Struktur nutzen, müssen das aber nicht.
 Alle Vorschläge sollen nur eine Hilfe für diejenigen sein, die lieber mit
 etwas mehr Anleitung vorgehen wollen.
 
@@ -67,6 +67,13 @@ class Crawler:
         :param path string the (absolute) url to fetch.
         :return None
         """
+
+        req = requests.get(path)
+        if req.status_code == 200:
+            self.store = req.content
+        else:
+            print('error 404 page not found')
+
         pass
 
     def crawl(self):
