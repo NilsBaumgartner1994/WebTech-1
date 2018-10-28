@@ -1,3 +1,8 @@
+##Entwickler:
+- Johann Arndt,
+- Nils Baumgartner,
+- Alexander Tessmer
+
 # Web-Technologien 18/19: Aufgabe 1 - Suchmaschine
 
 Implementieren Sie in Python eine Suchmaschine, die aus folgenden drei Teilen besteht:
