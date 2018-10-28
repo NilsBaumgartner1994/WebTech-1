@@ -1,7 +1,7 @@
 ## Entwickler:
-- Johann Arndt,
-- Nils Baumgartner,
-- Alexander Tessmer
+- Johann Arndt (960402),
+- Nils Baumgartner (955625),
+- Alexander Tessmer (954425)
 
 # Web-Technologien 18/19: Aufgabe 1 - Suchmaschine
 
