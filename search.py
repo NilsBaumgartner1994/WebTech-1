@@ -5,6 +5,7 @@ import webbrowser
 from server.webserver import Webserver, App
 from store import Store, load_store
 from crawler import Crawler
+from myHTML import myHTML
 
 class SearchApp(App):
     """
@@ -30,15 +31,14 @@ class SearchApp(App):
             q = request.params['q']
             hitlist = self.store.search(q)
             msg = "<h2>Ergebnis für <i>'{}'</i></h2>".format(q)
+
+            msg += myHTML.pageStart(self)
             if hitlist != None:
                 print(hitlist)
                 for (url, values) in hitlist:
-                    msg += """<h3><a href="{link}">{title}</a></h3>
-                             <p><a href="{link}">{link}</a></p>
-                             <p>{teaser}<p>""".format(
-                        link=url,
-                        title=self.store.pages[url]['title'],
-                        teaser=self.store.get_teaser(url, q))
+                    msg += myHTML.addFound(self,url,self.store.pages[url]['title'],self.store.get_teaser(url, q))
+            msg += myHTML.pageEnd(self)
+
         response.send_template('templates/search/search.tmpl', {'q': q, 'netloc': self.store.netloc, 'msg': msg})
 
 
