@@ -36,16 +36,24 @@ class Crawler:
         :param path string The current page's absolute path.
         :return None
         """
-        print("AusgabeHTML: ", html)
-        link_search = re.search('href((.|[\r\n]+)*?)>', html, re.IGNORECASE)
+        #print("AusgabeHTML: ", html)
+
+
+        #TODO: Alle arten von Links auch im plain text nicht nur href
+
+        link_search = re.search("href='((.|[\r\n]+)*?)'>", html, re.IGNORECASE)
         if link_search:
-            print("Count: ", link_search.groups)
-            for element in link_search.group():
-                link = element
+            #print("Link Search: ", link_search)
+            #print("Count: ", link_search.lastindex)
+
+            for index in range(1,link_search.lastindex+1):
+                link = link_search.group(index)
+                #print("Link: "+link)
+
                 link = re.sub('=', '', link, re.IGNORECASE).strip()
                 link = re.sub("'", '', link, re.IGNORECASE).strip()
                 link = re.sub('\s+', '', link).strip() #entferne Whitespace
-                print("Ausgabe2: ",link)
+                #print("Ausgabe2: ",link)
                 if link not in self.visited and link not in self.queue:
                     self.queue.append(link)
 
