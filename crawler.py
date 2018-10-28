@@ -36,7 +36,7 @@ class Crawler:
         :param path string The current page's absolute path.
         :return None
         """
-        pass
+        return None
 
     @staticmethod
     def get_title(html):
@@ -45,7 +45,11 @@ class Crawler:
         :param html string The raw page content.
         :return string The title.
         """
-        pass
+        title_search = re.search('<title>(.*)</title>', html, re.IGNORECASE)
+        title = "Kein Titel gefunden!"
+        if title_search:
+            title = title_search.group(1)
+        return title
 
     @staticmethod
     def clean(raw_html):
@@ -59,7 +63,13 @@ class Crawler:
         :param raw_html string The raw page content.
         :return string The cleaned html.
         """
-        pass
+
+        raw_html = re.sub('<script((.|[\r\n]+)*)</script>', '', raw_html, re.IGNORECASE).strip() #entferne Scripts
+        raw_html = re.sub('<style((.|[\r\n]+)*)</style>', '', raw_html, re.IGNORECASE).strip() #entferne Styles
+        raw_html = re.sub('<head((.|[\r\n]+)*)</head>', '', raw_html, re.IGNORECASE).strip() #entferne Header
+        raw_html = re.sub('<((.|[\r\n]+)*)>', '', raw_html).strip() #entferne Tags und Comments
+        raw_html = re.sub('\s+', ' ', raw_html).strip() #entferne Whitespace
+        return raw_html
 
     def fetch(self, path):
         """Fetch a url and store page.
@@ -81,5 +91,5 @@ class Crawler:
 
         for x in range(0,5):
             self.store.add('url'+ str(x), 'text' + str(x), 'title' + str(x))
-
+        return True
 

@@ -64,6 +64,7 @@ class Store:
         outfile = open(filename, 'wb')
         pickle.dump(self, outfile)
         outfile.close()
+        return True
 
     def add(self, url, html, title):
         """Add a page to the store.
