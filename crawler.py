@@ -82,7 +82,8 @@ class Crawler:
         :param path string the (absolute) url to fetch.
         :return None
         """
-
+        self.visited.append(path)
+        self.queue.remove(path)
         req = requests.get(path)
         if req.status_code == 200:
             self.store = req.content
@@ -93,8 +94,10 @@ class Crawler:
 
     def crawl(self):
         """Fetch pages and follow links. Build search database."""
-
-        for x in range(0,5):
-            self.store.add('url'+ str(x), 'text' + str(x), 'title' + str(x))
+        while self.queue[0]:
+            path=self.queue[0]
+            self.fetch(path)
+            html = self.store.pages[path]['html']
+            self.get_links(self, html, path)
         return True
 
