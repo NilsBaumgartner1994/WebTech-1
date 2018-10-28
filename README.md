@@ -1,4 +1,4 @@
-##Entwickler:
+## Entwickler:
 - Johann Arndt,
 - Nils Baumgartner,
 - Alexander Tessmer
