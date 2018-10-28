@@ -20,7 +20,7 @@ import pickle
 from pathlib import Path
 
 
-errorchars = '[ ?.!/;:]'
+errorchars = '[ ?.!/;:]' # Alle Sonderzeichen, welche nicht mit abgespeichert werden sollen
 
 def load_store(netloc):
     """Tries to load the store from pickled file.
@@ -30,7 +30,7 @@ def load_store(netloc):
     """
 
     filename = netloc
-    filename = re.sub(errorchars, '', filename)
+    filename = re.sub(errorchars, '', filename) # Entferne alle Sonderzeichen
 
     if not os.path.isfile(filename):
         return None
@@ -60,9 +60,9 @@ class Store:
     def save(self):
         """Save store to pickle file."""
         filename = self.netloc
-        filename = re.sub(errorchars, '', filename)
+        filename = re.sub(errorchars, '', filename) # Entferne alle Sonderzeichen
         outfile = open(filename, 'wb')
-        pickle.dump(self, outfile)
+        pickle.dump(self, outfile) # Speichere in Datei
         outfile.close()
         return True
 
