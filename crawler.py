@@ -69,10 +69,10 @@ class Crawler:
         :return string The cleaned html.
         """
 
-        raw_html = re.sub('<script((.|[\r\n]+)*)</script>', '', raw_html, re.IGNORECASE).strip() #entferne Scripts
-        raw_html = re.sub('<style((.|[\r\n]+)*)</style>', '', raw_html, re.IGNORECASE).strip() #entferne Styles
-        raw_html = re.sub('<head((.|[\r\n]+)*)</head>', '', raw_html, re.IGNORECASE).strip() #entferne Header
-        raw_html = re.sub('<((.|[\r\n]+)*)>', '', raw_html).strip() #entferne Tags und Comments
+        raw_html = re.sub('(<script)((.|[\r\n]+)*?)(</script>)', '', raw_html, re.IGNORECASE).strip() #entferne Scripts
+        raw_html = re.sub('(<style)((.|[\r\n]+)*?)(</style>)', '', raw_html, re.IGNORECASE).strip() #entferne Styles
+        raw_html = re.sub('(<head)((.|[\r\n]+)*?)(</head>)', '', raw_html, re.IGNORECASE).strip() #entferne Header
+        raw_html = re.sub('(<)((.|[\r\n]+)*?)(>)', '', raw_html).strip() #entferne Tags und Comments
         raw_html = re.sub('\s+', ' ', raw_html).strip() #entferne Whitespace
         return raw_html
 
@@ -82,22 +82,22 @@ class Crawler:
         :param path string the (absolute) url to fetch.
         :return None
         """
-        self.visited.append(path)
+        domain = self.store.netloc
         self.queue.remove(path)
-        req = requests.get(path)
+        req = requests.get(domain+path)
         if req.status_code == 200:
-            self.store = req.content
+            self.visited.append(path)
+            page = {'title': self.get_title(req.text), 'html': self.clean(req.text)}
+            self.store.pages[path] = page
         else:
             print('error 404 page not found')
-
-        pass
+        return None
 
     def crawl(self):
         """Fetch pages and follow links. Build search database."""
-        while self.queue[0]:
+        while self.queue:
             path=self.queue[0]
             self.fetch(path)
-            html = self.store.pages[path]['html']
-            self.get_links(self, html, path)
+            self.get_links(self.store.pages[path]['html'], path)
         return True
 
