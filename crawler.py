@@ -36,10 +36,18 @@ class Crawler:
         :param path string The current page's absolute path.
         :return None
         """
-        title_search = re.search('href = ((. | [\r\n]+) * ?) >', html, re.IGNORECASE)
-        if title_search:
-            print(title_search)
-            title = title_search.group(1)
+        print("AusgabeHTML: ", html)
+        link_search = re.search('href((.|[\r\n]+)*?)>', html, re.IGNORECASE)
+        if link_search:
+            print("Count: ", link_search.groups)
+            for element in link_search.group():
+                link = element
+                link = re.sub('=', '', link, re.IGNORECASE).strip()
+                link = re.sub("'", '', link, re.IGNORECASE).strip()
+                link = re.sub('\s+', '', link).strip() #entferne Whitespace
+                print("Ausgabe2: ",link)
+                if link not in self.visited and link not in self.queue:
+                    self.queue.append(link)
 
         return None
 
@@ -50,7 +58,7 @@ class Crawler:
         :param html string The raw page content.
         :return string The title.
         """
-        title_search = re.search('<title>(.*)</title>', html, re.IGNORECASE)
+        title_search = re.search('<title>(.*?)</title>', html, re.IGNORECASE)
         title = "Kein Titel gefunden!"
         if title_search:
             title = title_search.group(1)
@@ -87,6 +95,7 @@ class Crawler:
         req = requests.get(domain+path)
         if req.status_code == 200:
             self.visited.append(path)
+            self.get_links(req.text, path)
             page = {'title': self.get_title(req.text), 'html': self.clean(req.text)}
             self.store.pages[path] = page
         else:
@@ -96,8 +105,6 @@ class Crawler:
     def crawl(self):
         """Fetch pages and follow links. Build search database."""
         while self.queue:
-            path=self.queue[0]
-            self.fetch(path)
-            self.get_links(self.store.pages[path]['html'], path)
+            self.fetch(self.queue[0])
         return True
 

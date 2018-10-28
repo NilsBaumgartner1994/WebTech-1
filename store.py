@@ -84,7 +84,6 @@ class Store:
         :return A short teaser text from page including term.
         """
         debug = True
-        print("Ausgabe: "+ self.pages[page]['html'])
         if debug:
             return self.pages[page]['html']
         return self.pages[page]['html']
