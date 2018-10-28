@@ -83,6 +83,9 @@ class Store:
         :param q string The search string
         :return A short teaser text from page including term.
         """
+        debug = True
+        if debug:
+            return self.pages[page]['html']
         return self.pages[page]['html']
 
     def search(self, q):
