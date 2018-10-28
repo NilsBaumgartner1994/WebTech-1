@@ -5,7 +5,7 @@ import webbrowser
 from server.webserver import Webserver, App
 from store import Store, load_store
 from crawler import Crawler
-from myHTML import myHTML
+#from myHTML import myHTML
 
 class SearchApp(App):
     """
@@ -24,6 +24,68 @@ class SearchApp(App):
     def register_routes(self):
         self.add_route('', self.search)  # there is only one route for everything
 
+    def pageStart(self):
+        return """<style>
+
+* {margin: 0; padding: 0;}
+
+div {
+  margin: 20px;
+}
+
+ul {
+  list-style-type: none;
+  width: 500px;
+}
+
+h3 {
+  font: bold 20px/1.5 Helvetica, Verdana, sans-serif;
+}
+
+li img {
+  float: left;
+  margin: 0 15px 0 0;
+}
+
+li p {
+  font: 200 12px/1.5 Georgia, Times New Roman, serif;
+}
+
+li {
+  padding: 10px;
+  overflow: auto;
+}
+
+li:hover {
+  background: #eee;
+  cursor: pointer;
+}
+
+#rcorners2 {
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 20px;
+    width: 200px;
+    height: 150px;
+}
+
+</style><br><hr/><br><br><ul>"""
+
+    def pageEnd(self):
+        return """</ul>"""
+
+    def addFound(self, url, title, teaser):
+        msg = """<li><h1>""" + title + """</h1>"""
+        msg += """<h2><p><a href = "{domain}{link}">{link}</a></p></h2>""".format(
+            domain=self.store.netloc, link=url)
+
+        msg += """<p>""" + teaser + """</p>"""
+
+        msg += """</li><hr />"""  # horizonatal Line
+
+        return msg
+
+
     def search(self, request, response, pathmatch=None):
         msg = ''
         q = ''
@@ -32,12 +94,12 @@ class SearchApp(App):
             hitlist = self.store.search(q)
             msg = "<h2>Ergebnis für <i>'{}'</i></h2>".format(q)
 
-            msg += myHTML.pageStart(self)
+            msg += self.pageStart()
             if hitlist != None:
                 print(hitlist)
                 for (url, values) in hitlist:
-                    msg += myHTML.addFound(self,url,self.store.pages[url]['title'],self.store.get_teaser(url, q))
-            msg += myHTML.pageEnd(self)
+                    msg += self.addFound(url,self.store.pages[url]['title'],self.store.get_teaser(url, q))
+            msg += self.pageEnd()
 
         response.send_template('templates/search/search.tmpl', {'q': q, 'netloc': self.store.netloc, 'msg': msg})
 

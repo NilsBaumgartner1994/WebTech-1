@@ -37,25 +37,42 @@ class Crawler:
         :return None
         """
         #print("AusgabeHTML: ", html)
-
-
-        #TODO: Alle arten von Links auch im plain text nicht nur href
-
-        link_search = re.search("href='((.|[\r\n]+)*?)'>", html, re.IGNORECASE)
+        linkpattern = "((.|[\r\n]+)*?)"
+        fullpattern = "href\s*=\s*("+"'"+ linkpattern + "'" + "|" + '"' + linkpattern + '")'
+        link_search = re.finditer(fullpattern, html, re.IGNORECASE)
         if link_search:
-            #print("Link Search: ", link_search)
-            #print("Count: ", link_search.lastindex)
+            for element in link_search:
+                link = element.group(0)
+                # Reduzieren des Links auf den Link selbst
+                link = re.sub('href\s*=\s*', '', link).strip()
+                link = re.sub('"*', '', link).strip()
+                link = re.sub("'*", '', link).strip()
 
-            for index in range(1,link_search.lastindex+1):
-                link = link_search.group(index)
-                #print("Link: "+link)
+                if "http:" not in link and "https:" not in link and "www." not in link:
 
-                link = re.sub('=', '', link, re.IGNORECASE).strip()
-                link = re.sub("'", '', link, re.IGNORECASE).strip()
-                link = re.sub('\s+', '', link).strip() #entferne Whitespace
-                #print("Ausgabe2: ",link)
-                if link not in self.visited and link not in self.queue:
-                    self.queue.append(link)
+                    #Domain holen
+                    #domain_search = re.search('([^/]|(//))*', link, re.IGNORECASE)
+                    #if domain_search:
+                        #link_domain = domain_search.group(0)
+                        #print("Domain: ", link_domain)
+                        #print("Rest: ", re.sub(link_domain, '', link).strip())
+                        #if True or not link_domain or link_domain == "" or self.store.netloc in link_domain:
+
+                            #print("PfadStart: ", path)
+
+                            #print("PfadEnd: ", path)
+
+                            #if self.store.netloc in link_domain:
+
+                    #wandle alle Links zu absoluten Links
+                    path = re.sub('[^/]*$', '', path).strip()
+                    link = re.sub('^'+path, '', link).strip()
+                    domRelLink = path+link
+                    domRelLink = re.sub('//', '/', domRelLink).strip()
+
+                    if domRelLink not in self.visited and domRelLink not in self.queue:
+                        print("EndLink: ", domRelLink)
+                        self.queue.append(domRelLink)
 
         return None
 
@@ -101,7 +118,7 @@ class Crawler:
         domain = self.store.netloc
         self.queue.remove(path)
         req = requests.get(domain+path)
-        if req.status_code == 200:
+        if req.status_code == 200 and 'html' in req.headers['Content-type']:
             self.visited.append(path)
             self.get_links(req.text, path)
             page = {'title': self.get_title(req.text), 'html': self.clean(req.text)}
@@ -112,7 +129,12 @@ class Crawler:
 
     def crawl(self):
         """Fetch pages and follow links. Build search database."""
+        count = 0
         while self.queue:
+            print("Queue: ", self.queue)
             self.fetch(self.queue[0])
+            count += 1
+            if count > 20:
+                return True
         return True
 

@@ -51,6 +51,8 @@ class Store:
         """
         self.netloc = netloc
 
+        self.debug = True
+
         # Terms is a dictionary that maps search terms to URIs
         self.terms = {}
 
@@ -61,9 +63,10 @@ class Store:
         """Save store to pickle file."""
         filename = self.netloc
         filename = re.sub(errorchars, '', filename) # Entferne alle Sonderzeichen
-        outfile = open(filename, 'wb')
-        pickle.dump(self, outfile) # Speichere in Datei
-        outfile.close()
+        if not self.debug:
+            outfile = open(filename, 'wb')
+            pickle.dump(self, outfile) # Speichere in Datei
+            outfile.close()
         return True
 
     def add(self, url, html, title):
@@ -83,8 +86,8 @@ class Store:
         :param q string The search string
         :return A short teaser text from page including term.
         """
-        debug = True
-        if debug:
+
+        if self.debug:
             return self.pages[page]['html']
         return self.pages[page]['html']
 
