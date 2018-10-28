@@ -129,12 +129,12 @@ class Crawler:
 
     def crawl(self):
         """Fetch pages and follow links. Build search database."""
-        count = 0
+        #count = 0
         while self.queue:
             print("Queue: ", self.queue)
             self.fetch(self.queue[0])
-            count += 1
-            if count > 20:
-                return True
+            #count += 1
+            #if count > 20:
+            #    return True
         return True
 

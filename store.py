@@ -86,7 +86,8 @@ class Store:
         :param q string The search string
         :return A short teaser text from page including term.
         """
-
+        # ToDo: Erster Satz der Seite und erstes vorkommen des Begriffs als Satz zwischen zwei Punkten mit ... getrennt
+        # Achtung problem bei mehreren Suchbegriffen
         if self.debug:
             return self.pages[page]['html']
         return self.pages[page]['html']
