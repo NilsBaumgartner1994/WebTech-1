@@ -84,5 +84,5 @@ class Crawler:
 
         for x in range(0,5):
             self.store.add('url'+ str(x), 'text' + str(x), 'title' + str(x))
-    return True
+        return True
 
