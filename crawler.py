@@ -36,6 +36,11 @@ class Crawler:
         :param path string The current page's absolute path.
         :return None
         """
+        title_search = re.search('href = ((. | [\r\n]+) * ?) >', html, re.IGNORECASE)
+        if title_search:
+            print(title_search)
+            title = title_search.group(1)
+
         return None
 
     @staticmethod
