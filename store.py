@@ -92,10 +92,15 @@ class Store:
         html = self.pages[page]['html']
         if self.debug:
             return html
-
-        word_search = re.findall("[^\.]*?"+q+"[^\.]*?[.|:].", html, re.IGNORECASE)
+        q = q.strip()
+        print("Query:", q)
+        print("Teaser HTML:", html)
+        word_search = re.findall("[^\.]*?"+q+"[^\.]*?[\.:]", html, flags=re.IGNORECASE)
+        print("Teaser Sentence:", word_search)
         if word_search:
+            print("Teaser Sentence Count:", len(word_search))
             teaser, finds = re.subn("(?P<query>("+q+"))", r'<mark>\1</mark>', word_search[0].strip(), flags=re.IGNORECASE)
+            teaser = re.sub('\s+', ' ', teaser).strip()  # entferne Whitespace
             return teaser.strip()
 
         return ""
@@ -106,13 +111,16 @@ class Store:
         :param q string The full query string.
         """
 
-        full = q
-        parts = q.split()
+        if q in self.terms:
+            print("Term found:", self.terms[q])
+            return self.terms[q]
+
+
+        #full = q
+        #parts = q.split()
         #self.terms[full] = [{'count': 1, 'url': ""}]
 
-        #word_search = re.findall(q, html, re.IGNORECASE)
-        #if word_search:
-            #print("Word Count: ", len(word_search))
+
 
         #word_search = re.findall("[^\.]*?"+q+"[^\.]*?[.|:].", html, re.IGNORECASE)
         #if word_search:
@@ -131,6 +139,15 @@ class Store:
 
         dictlist = []
         for url, vorkommen in self.pages.items():
-            temp = [url, vorkommen]
-            dictlist.append(temp)
+            word_search = re.findall(q, vorkommen['html'], re.IGNORECASE)
+            if word_search:
+                print("Word Count:", len(word_search))
+                count = len(word_search)
+                temp = (url, count)
+                if count > 0:
+                    dictlist.append(temp)
+
+
+        dictlist = sorted(dictlist, key=lambda x: x[1], reverse=True)
+        self.terms[q]=dictlist
         return dictlist
