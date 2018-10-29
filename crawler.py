@@ -71,7 +71,7 @@ class Crawler:
                     domRelLink = re.sub('//', '/', domRelLink).strip()
 
                     if domRelLink not in self.visited and domRelLink not in self.queue:
-                        print("EndLink: ", domRelLink)
+                        #print("EndLink: ", domRelLink)
                         self.queue.append(domRelLink)
 
         return None
@@ -131,7 +131,7 @@ class Crawler:
         """Fetch pages and follow links. Build search database."""
         #count = 0
         while self.queue:
-            print("Queue: ", self.queue)
+            #print("Queue: ", self.queue)
             self.fetch(self.queue[0])
             #count += 1
             #if count > 20:

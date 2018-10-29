@@ -42,6 +42,10 @@ h3 {
   font: bold 20px/1.5 Helvetica, Verdana, sans-serif;
 }
 
+h4 {
+  font: bold 12px/1.5 Helvetica, Verdana, sans-serif;
+}
+
 li img {
   float: left;
   margin: 0 15px 0 0;
@@ -96,7 +100,7 @@ li:hover {
 
             msg += self.pageStart()
             if hitlist != None:
-                print(hitlist)
+                #print(hitlist)
                 for (url, values) in hitlist:
                     msg += self.addFound(url,self.store.pages[url]['title'],self.store.get_teaser(url, q))
             msg += self.pageEnd()

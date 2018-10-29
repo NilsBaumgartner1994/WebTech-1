@@ -51,7 +51,7 @@ class Store:
         """
         self.netloc = netloc
 
-        self.debug = True
+        self.debug = False
 
         # Terms is a dictionary that maps search terms to URIs
         self.terms = {}
@@ -88,15 +88,47 @@ class Store:
         """
         # ToDo: Erster Satz der Seite und erstes vorkommen des Begriffs als Satz zwischen zwei Punkten mit ... getrennt
         # Achtung problem bei mehreren Suchbegriffen
+
+        html = self.pages[page]['html']
         if self.debug:
-            return self.pages[page]['html']
-        return self.pages[page]['html']
+            return html
+
+        word_search = re.findall("[^\.]*?"+q+"[^\.]*?[.|:].", html, re.IGNORECASE)
+        if word_search:
+            teaser, finds = re.subn("(?P<query>("+q+"))", r'<mark>\1</mark>', word_search[0].strip(), flags=re.IGNORECASE)
+            return teaser.strip()
+
+        return ""
 
     def search(self, q):
         """Search for query string.
 
         :param q string The full query string.
         """
+
+        full = q
+        parts = q.split()
+        #self.terms[full] = [{'count': 1, 'url': ""}]
+
+        #word_search = re.findall(q, html, re.IGNORECASE)
+        #if word_search:
+            #print("Word Count: ", len(word_search))
+
+        #word_search = re.findall("[^\.]*?"+q+"[^\.]*?[.|:].", html, re.IGNORECASE)
+        #if word_search:
+            #print("Sentence Count: ", len(word_search))
+         #   teaser, finds = re.subn("(?P<query>("+q+"))", r'<mark>\1</mark>', word_search[0].strip(), flags=re.IGNORECASE)
+            #print("Replaces: ", finds)
+            #print("Sentence: ", teaser)
+          #  return teaser.strip()
+
+        #return ""
+
+
+        #word_search = re.finditer(q, html, re.IGNORECASE)
+        #if word_search:
+        #    for element in word_search:
+
         dictlist = []
         for url, vorkommen in self.pages.items():
             temp = [url, vorkommen]
