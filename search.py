@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import webbrowser
+import re
 
 from server.webserver import Webserver, App
 from store import Store, load_store
@@ -94,6 +95,10 @@ li:hover {
         q = ''
         if 'q' in request.params:  # check if parameter is given
             q = request.params['q']
+
+            #Regex Safe Query
+            q = re.sub('[^\s\d\w]', '', q).strip()
+
             hitlist = self.store.search(q)
             msg = "<br><h2>Ergebnis für <i>'{}'</i>:</h2>".format(q)
 
