@@ -35,7 +35,6 @@ div {
 
 ul {
   list-style-type: none;
-  width: 500px;
 }
 
 h3 {
