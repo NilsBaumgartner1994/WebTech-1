@@ -72,7 +72,7 @@ li:hover {
     height: 150px;
 }
 
-</style><br><hr/><br><ul>"""
+</style><br><hr/><ul>"""
 
     def pageEnd(self):
         return """</ul>"""
@@ -95,7 +95,7 @@ li:hover {
         if 'q' in request.params:  # check if parameter is given
             q = request.params['q']
             hitlist = self.store.search(q)
-            msg = "<h2>Ergebnis für <i>'{}'</i></h2>".format(q)
+            msg = "<br><h2>Ergebnis für <i>'{}'</i>:</h2>".format(q)
 
             msg += self.pageStart()
             if hitlist != None:
