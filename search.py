@@ -73,7 +73,7 @@ li:hover {
     height: 150px;
 }
 
-</style><br><hr/><br><br><ul>"""
+</style><br><hr/><br><ul>"""
 
     def pageEnd(self):
         return """</ul>"""
