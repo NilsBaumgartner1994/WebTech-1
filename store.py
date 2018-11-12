@@ -139,7 +139,8 @@ class Store:
 
         dictlist = []
         for url, vorkommen in self.pages.items():
-            word_search = re.findall(q, vorkommen['html'], re.IGNORECASE)
+            query = re.sub('\s+', '|', q).strip()
+            word_search = re.findall(query, vorkommen['html'], re.IGNORECASE)
             if word_search:
                 print("Word Count:", len(word_search))
                 count = len(word_search)
