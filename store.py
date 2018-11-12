@@ -92,16 +92,20 @@ class Store:
         html = self.pages[page]['html']
         if self.debug:
             return html
-        q = q.strip()
-        print("Query:", q)
+        query = re.sub('\s+', '|', q.strip()).strip()
+        print("Query:", query)
         print("Teaser HTML:", html)
-        word_search = re.findall("[^\.]*?"+q+"[^\.]*?[\.:]", html, flags=re.IGNORECASE)
+        word_search = re.findall("(([^\.]*)("+query+")([^\.]*?)[\.:])", html, flags=re.IGNORECASE)
         print("Teaser Sentence:", word_search)
         if word_search:
+            all_teaser = ""
             print("Teaser Sentence Count:", len(word_search))
-            teaser, finds = re.subn("(?P<query>("+q+"))", r'<mark>\1</mark>', word_search[0].strip(), flags=re.IGNORECASE)
-            teaser = re.sub('\s+', ' ', teaser).strip()  # entferne Whitespace
-            return teaser.strip()
+            for i in range(0,len(word_search)):
+                print("Teaser Sentence 1:", word_search[i][0])
+                teaser, finds = re.subn("(?P<query>("+query+"))", r'<mark>\1</mark>', word_search[i][0].strip(), flags=re.IGNORECASE)
+                teaser = re.sub('\s+', ' ', teaser).strip()  # entferne Whitespace
+                all_teaser = all_teaser + teaser + " ... "
+            return all_teaser.strip()[:-4]
 
         return ""
 
