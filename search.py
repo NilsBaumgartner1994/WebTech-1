@@ -78,8 +78,8 @@ li:hover {
     def pageEnd(self):
         return """</ul>"""
 
-    def addFound(self, url, title, teaser):
-        msg = """<li><h1>""" + title + """</h1>"""
+    def addFound(self, url, count ,title, teaser):
+        msg = """<li><h1>({amount}): """.format(amount=count) + title + """</h1>"""
         msg += """<h2><p><a href = "{domain}{link}">{link}</a></p></h2>""".format(
             domain=self.store.netloc, link=url)
 
@@ -102,7 +102,7 @@ li:hover {
             if hitlist != None:
                 #print(hitlist)
                 for (url, values) in hitlist:
-                    msg += self.addFound(url,self.store.pages[url]['title'],self.store.get_teaser(url, q))
+                    msg += self.addFound(url,values,self.store.pages[url]['title'],self.store.get_teaser(url, q))
             msg += self.pageEnd()
 
         response.send_template('templates/search/search.tmpl', {'q': q, 'netloc': self.store.netloc, 'msg': msg})
