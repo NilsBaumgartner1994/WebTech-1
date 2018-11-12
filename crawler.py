@@ -37,41 +37,25 @@ class Crawler:
         :return None
         """
         #print("AusgabeHTML: ", html)
-        linkpattern = "((.|[\r\n]+)*?)"
-        fullpattern = "href\s*=\s*("+"'"+ linkpattern + "'" + "|" + '"' + linkpattern + '")'
-        link_search = re.finditer(fullpattern, html, re.IGNORECASE)
-        if link_search:
-            for element in link_search:
+        linkpattern = "((.|[\r\n]+)*?)" #alle chars außer newline und newline ==> alle charaktere
+        fullpattern = "href\s*=\s*("+"'"+ linkpattern + "'" + "|" + '"' + linkpattern + '")' #nur links mit href sind echte links
+        link_search = re.finditer(fullpattern, html, re.IGNORECASE) #such diese
+        if link_search: #falls was gefunden
+            for element in link_search: #fuer alle elemente
                 link = element.group(0)
                 # Reduzieren des Links auf den Link selbst
                 link = re.sub('href\s*=\s*', '', link).strip()
-                link = re.sub('"*', '', link).strip()
-                link = re.sub("'*", '', link).strip()
+                link = re.sub('"*', '', link).strip() #alle doppelten anführungszeichen
+                link = re.sub("'*", '', link).strip() #alle einfachen anführungszeichen
 
                 if "http:" not in link and "https:" not in link and "www." not in link:
-
-                    #Domain holen
-                    #domain_search = re.search('([^/]|(//))*', link, re.IGNORECASE)
-                    #if domain_search:
-                        #link_domain = domain_search.group(0)
-                        #print("Domain: ", link_domain)
-                        #print("Rest: ", re.sub(link_domain, '', link).strip())
-                        #if True or not link_domain or link_domain == "" or self.store.netloc in link_domain:
-
-                            #print("PfadStart: ", path)
-
-                            #print("PfadEnd: ", path)
-
-                            #if self.store.netloc in link_domain:
-
                     #wandle alle Links zu absoluten Links
                     path = re.sub('[^/]*$', '', path).strip()
                     link = re.sub('^'+path, '', link).strip()
                     domRelLink = path+link
                     domRelLink = re.sub('//', '/', domRelLink).strip()
 
-                    if domRelLink not in self.visited and domRelLink not in self.queue:
-                        #print("EndLink: ", domRelLink)
+                    if domRelLink not in self.visited and domRelLink not in self.queue: #wenn noch nicht besucht
                         self.queue.append(domRelLink)
 
         return None
@@ -129,7 +113,7 @@ class Crawler:
 
     def crawl(self):
         """Fetch pages and follow links. Build search database."""
-        #count = 0
+        #count = 0 #for debugging bigger sites
         while self.queue:
             #print("Queue: ", self.queue)
             self.fetch(self.queue[0])

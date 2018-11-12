@@ -17,7 +17,6 @@ class SearchApp(App):
     1. Registrierung der Routen
     2. Definition eines Request-Handlers
     """
-
     def __init__(self, s, **kwargs):
         self.store = s
         App.__init__(self, **kwargs)  # super init
@@ -26,6 +25,8 @@ class SearchApp(App):
         self.add_route('', self.search)  # there is only one route for everything
 
     def pageStart(self):
+        """Returns the start of a PageStart.
+        """
         return """<style>
 
 * {margin: 0; padding: 0;}
@@ -76,31 +77,43 @@ li:hover {
 </style><br><hr/><ul>"""
 
     def pageEnd(self):
+        """Returns the HTML of the End ResultPage.
+        """
         return """</ul>"""
 
     def addFound(self, url, count ,title, teaser):
-        msg = """<li><h2>({amount}): """.format(amount=count) + title + """</h2>"""
+        """Returns a HTML of a found result.
+        :param url the url.
+        :param count the amount of found strings in the result
+        :param title the title of the Page
+        :param teaser a small teaser of a found result
+        """
+        msg = """<li><h2>({amount}): """.format(amount=count) + title + """</h2>""" #Header
         msg += """<h2><p><a href = "{domain}{link}">{link}</a></p></h2>""".format(
-            domain=self.store.netloc, link=url)
+            domain=self.store.netloc, link=url) # The link
 
-        msg += """<p>""" + teaser + """</p>"""
+        msg += """<p>""" + teaser + """</p>""" #the teaser
 
         msg += """</li><hr />"""  # horizonatal Line
 
         return msg
 
-
+    #
     def search(self, request, response, pathmatch=None):
+        """Search for query string.
+        :param request the given request of the html.
+        :param response where the response should be given to
+        """
         msg = ''
         q = ''
         if 'q' in request.params:  # check if parameter is given
             q = request.params['q']
 
             #Regex Safe Query
-            q = re.sub('[^\s\d\w]', '', q).strip()
+            q = re.sub('[^\s\d\w]', '', q).strip() #only words, digits, whitespaces
 
-            hitlist = self.store.search(q)
-            msg = "<br><h2>Ergebnis für <i>'{}'</i>:</h2>".format(q)
+            hitlist = self.store.search(q) #runs the search method
+            msg = "<br><h2>Ergebnis für <i>'{}'</i>:</h2>".format(q) #beginning of creating the response message
 
             msg += self.pageStart()
             if hitlist != None:

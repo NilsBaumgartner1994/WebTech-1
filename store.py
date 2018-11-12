@@ -17,7 +17,6 @@ etwas mehr Anleitung vorgehen wollen.
 import os.path  # path related functions
 import re  # regular expressions
 import pickle
-from pathlib import Path
 
 
 errorchars = '[ ?.!/;:]' # Alle Sonderzeichen, welche nicht mit abgespeichert werden sollen
@@ -86,26 +85,22 @@ class Store:
         :param q string The search string
         :return A short teaser text from page including term.
         """
-        # ToDo: Erster Satz der Seite und erstes vorkommen des Begriffs als Satz zwischen zwei Punkten mit ... getrennt
-        # Achtung problem bei mehreren Suchbegriffen
 
         html = self.pages[page]['html']
         if self.debug:
             return html
-        query = re.sub('\s+', '|', q.strip()).strip()
+        query = re.sub('\s+', '|', q.strip()).strip() #mehrere querrys gesplittet mit oder
         print("Query:", query)
-        print("Teaser HTML:", html)
-        word_search = re.findall("(([^\.]*)("+query+")([^\.]*?)[\.:])", html, flags=re.IGNORECASE)
+        word_search = re.findall("(([^\.]*)("+query+")([^\.]*?)[\.:])", html, flags=re.IGNORECASE)  #finde saetze um query ergebnisse
         print("Teaser Sentence:", word_search)
-        if word_search:
+        if word_search: #wenn was gefunden
             all_teaser = ""
             print("Teaser Sentence Count:", len(word_search))
-            for i in range(0,len(word_search)):
-                print("Teaser Sentence 1:", word_search[i][0])
-                teaser, finds = re.subn("(?P<query>("+query+"))", r'<mark>\1</mark>', word_search[i][0].strip(), flags=re.IGNORECASE)
+            for i in range(0,len(word_search)): #fuer alle gefundenen
+                teaser, finds = re.subn("(?P<query>("+query+"))", r'<mark>\1</mark>', word_search[i][0].strip(), flags=re.IGNORECASE) #markiere alle woerter in den saetzen
                 teaser = re.sub('\s+', ' ', teaser).strip()  # entferne Whitespace
                 all_teaser = all_teaser + teaser + " ... "
-            return all_teaser.strip()[:-4]
+            return all_teaser.strip()[:-4] #entferne letzen drei punkte
 
         return ""
 
@@ -115,44 +110,23 @@ class Store:
         :param q string The full query string.
         """
 
-        if q in self.terms:
+        if q in self.terms: # wenn bereits gefunden, gebe aus
             print("Term found:", self.terms[q])
             return self.terms[q]
 
 
-        #full = q
-        #parts = q.split()
-        #self.terms[full] = [{'count': 1, 'url': ""}]
-
-
-
-        #word_search = re.findall("[^\.]*?"+q+"[^\.]*?[.|:].", html, re.IGNORECASE)
-        #if word_search:
-            #print("Sentence Count: ", len(word_search))
-         #   teaser, finds = re.subn("(?P<query>("+q+"))", r'<mark>\1</mark>', word_search[0].strip(), flags=re.IGNORECASE)
-            #print("Replaces: ", finds)
-            #print("Sentence: ", teaser)
-          #  return teaser.strip()
-
-        #return ""
-
-
-        #word_search = re.finditer(q, html, re.IGNORECASE)
-        #if word_search:
-        #    for element in word_search:
-
-        dictlist = []
+        dictlist = [] #anscheinend neu
         for url, vorkommen in self.pages.items():
-            query = re.sub('\s+', '|', q).strip()
-            word_search = re.findall(query, vorkommen['html'], re.IGNORECASE)
-            if word_search:
+            query = re.sub('\s+', '|', q).strip() #teile den query auf
+            word_search = re.findall(query, vorkommen['html'], re.IGNORECASE) #finde alle woerter auf der seite
+            if word_search: #fuer jeden fund
                 print("Word Count:", len(word_search))
-                count = len(word_search)
+                count = len(word_search) #zaehle anzahl
                 temp = (url, count)
                 if count > 0:
-                    dictlist.append(temp)
+                    dictlist.append(temp) #speichere wenn etwas gefunden
 
 
-        dictlist = sorted(dictlist, key=lambda x: x[1], reverse=True)
+        dictlist = sorted(dictlist, key=lambda x: x[1], reverse=True) #sortiere absteigend nach der anzahl
         self.terms[q]=dictlist
         return dictlist
