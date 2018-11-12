@@ -78,7 +78,7 @@ li:hover {
         return """</ul>"""
 
     def addFound(self, url, count ,title, teaser):
-        msg = """<li><h1>({amount}): """.format(amount=count) + title + """</h1>"""
+        msg = """<li><h2>({amount}): """.format(amount=count) + title + """</h2>"""
         msg += """<h2><p><a href = "{domain}{link}">{link}</a></p></h2>""".format(
             domain=self.store.netloc, link=url)
 
